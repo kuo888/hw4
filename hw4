@@ -1,56 +1,57 @@
-# include <stdio.h>
+#include <stdio.h>
 #define is_bound(x,y)(x>=0 && x<=7 && y>=0 &&y<=7)
 
 int chess[8][8]={
-    (0,0,0,0,0,0,0,0)
-    (0,0,0,0,0,0,0,0)
-    (0,0,0,0,0,0,0,0)
-    (0,0,0,1,2,0,0,0)
-    (0,0,0,2,1,0,0,0)
-    (0,0,0,0,0,0,0,0)
-    (0,0,0,0,0,0,0,0)
-    (0,0,0,0,0,0,0,0)
+    {0,0,0,0,0,0,0,0},
+    {0,0,0,0,0,0,0,0},
+    {0,0,0,0,0,0,0,0},
+    {0,0,0,1,2,0,0,0},
+    {0,0,0,2,1,0,0,0},
+    {0,0,0,0,0,0,0,0},
+    {0,0,0,0,0,0,0,0},
+    {0,0,0,0,0,0,0,0}
 };
 
-int main(){
-    int dx,dy,i,j,color; //i是橫列，j是直行
-    color=1;
-    i=2;
-    j=4;
-    dx=1; //方向
-    dy=1;
+int check_move(int chess[8][8], int i, int j, int dx, int dy, int color) {  //此函數用來檢查特定方向上的可下子位置，並返回是否有可下的位置移與位置距離給定的的步數
+    int distance = 0;
+    int x = i + dx;
+    int y = j + dy;
 
-//int check(int chess[8][8],int i,int j,int dx,int dy,int color)
-    int an_colar = 3-color;
-    int an_color = color^3;
-    //# step1.(i,j)可不可能可以下
-    int x = i+dx;
-    int y = i+dy;
-    if(is_bound(x,y)){
-        if(chess[x][y] !=2)
-        printf("%d,%d is not free for color=%d",i,j,color);
-    }
-    else{
-        printf("%d,%d is not free for color=%d",i,j,color);
-        return 0;
+    if (!is_bound(x, y) || chess[x][y] != 0) {
+        return 0; // 表示沒有可下的位置
     }
 
-    //# step2.chess[x][y]==2
-    x = x+dx;
-    y = y+dy;
-    while(is_bound(x,y)){
-        if(chess[x][y]==0){
-            printf("%d,%d is not free for color=%d",i,j,color);
-            break;
+    while (is_bound(x, y)) {
+        if (chess[x][y] == color) {
+            return distance + 1; // 位置在距離 (i,j) 有 distance 步處
+        } else if (chess[x][y] == 0) {
+            return 0; // 表示沒有可下的位置
         }
-        if(chess[x][y]==1){
-            printf("%d,%d is free for color=%d",i,j,color); 
-            break;
-        }
-        x = x+dx;
-        y = y+dy;
+
+        distance++;
+        x += dx;
+        y += dy;
+    }
+
+    return 0; // 表示沒有可下的位置
+}
+
+int main() {
+    int dx, dy, i, j, color; //i是橫列，j是直行
+    color = 1;
+    i = 2;
+    j = 4;
+    dx = 1; //方向
+    dy = 1;
+
+    int result = check_move(chess, i, j, dx, dy, color);
+
+    if (result == 0) {
+        printf("%d %d\n", i, j);
+    } else {
+        printf(" %d %d %d\n", i, j, result);
     }
 
     return 0;
-
 }
+
